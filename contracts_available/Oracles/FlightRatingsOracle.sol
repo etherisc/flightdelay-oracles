@@ -1,8 +1,9 @@
-pragma solidity 0.5.12;
+pragma solidity 0.6.11;
+// SPDX-License-Identifier: Apache-2.0
 
 import "./etheriscOracleAPI.sol";
-import "./strings.sol";
-import "../GIF/Oracle.sol";
+import "../Utilities/strings.sol";
+import "@etherisc/gif-contracts/contracts/Oracle.sol";
 
 contract FlightRatingsOracle is Oracle, usingEtheriscOracle {
     using strings for *;
@@ -31,7 +32,7 @@ contract FlightRatingsOracle is Oracle, usingEtheriscOracle {
     }
 
     function request(uint256 _requestId, bytes calldata _input)
-        external
+        external override
         onlyQuery
     {
         // todo: set permissions
@@ -50,7 +51,7 @@ contract FlightRatingsOracle is Oracle, usingEtheriscOracle {
         bytes32 _queryId,
         string memory _result
     )
-        public
+        public override
         onlyOracle
     {
         uint256 requestId = requests[_queryId];

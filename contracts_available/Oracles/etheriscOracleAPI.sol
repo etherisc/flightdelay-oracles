@@ -1,4 +1,5 @@
-pragma solidity 0.5.12;
+pragma solidity 0.6.11;
+// SPDX-License-Identifier: Apache-2.0
 
 interface EtheriscAddressResolverI {
     function getAddress() external returns (address _address);
@@ -46,7 +47,7 @@ contract usingEtheriscOracle {
         bytes32 _myId,
         string memory _result
     )
-        public
+        virtual public
     {
         return;
         _myId;

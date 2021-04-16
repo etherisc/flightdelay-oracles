@@ -34,7 +34,7 @@
  *      corresponding to the left and right parts of the string.
  */
 
-pragma solidity 0.5.12;
+pragma solidity 0.6.11;
 
 library strings {
     struct slice {
@@ -199,9 +199,9 @@ library strings {
      * @return The result of the comparison.
      */
     function compare(slice memory self, slice memory other)
-        internal
-        pure
-        returns (int)
+    internal
+    pure
+    returns (int)
     {
         uint shortest = self._len;
         if (other._len < self._len) shortest = other._len;
@@ -237,9 +237,9 @@ library strings {
      * @return True if the slices are equal, false otherwise.
      */
     function equals(slice memory self, slice memory other)
-        internal
-        pure
-        returns (bool)
+    internal
+    pure
+    returns (bool)
     {
         return compare(self, other) == 0;
     }
@@ -252,9 +252,9 @@ library strings {
      * @return `rune`.
      */
     function nextRune(slice memory self, slice memory rune)
-        internal
-        pure
-        returns (slice memory)
+    internal
+    pure
+    returns (slice memory)
     {
         rune._ptr = self._ptr;
 
@@ -300,9 +300,9 @@ library strings {
      * @return A slice containing only the first rune from `self`.
      */
     function nextRune(slice memory self)
-        internal
-        pure
-        returns (slice memory ret)
+    internal
+    pure
+    returns (slice memory ret)
     {
         nextRune(self, ret);
     }
@@ -376,9 +376,9 @@ library strings {
      * @return True if the slice starts with the provided text, false otherwise.
      */
     function startsWith(slice memory self, slice memory needle)
-        internal
-        pure
-        returns (bool)
+    internal
+    pure
+    returns (bool)
     {
         if (self._len < needle._len) {
             return false;
@@ -394,8 +394,8 @@ library strings {
             let selfptr := mload(add(self, 0x20))
             let needleptr := mload(add(needle, 0x20))
             equal := eq(
-                keccak256(selfptr, length),
-                keccak256(needleptr, length)
+            keccak256(selfptr, length),
+            keccak256(needleptr, length)
             )
         }
         return equal;
@@ -409,9 +409,9 @@ library strings {
      * @return `self`
      */
     function beyond(slice memory self, slice memory needle)
-        internal
-        pure
-        returns (slice memory)
+    internal
+    pure
+    returns (slice memory)
     {
         if (self._len < needle._len) {
             return self;
@@ -424,8 +424,8 @@ library strings {
                 let selfptr := mload(add(self, 0x20))
                 let needleptr := mload(add(needle, 0x20))
                 equal := eq(
-                    keccak256(selfptr, length),
-                    keccak256(needleptr, length)
+                keccak256(selfptr, length),
+                keccak256(needleptr, length)
                 )
             }
         }
@@ -445,9 +445,9 @@ library strings {
      * @return True if the slice starts with the provided text, false otherwise.
      */
     function endsWith(slice memory self, slice memory needle)
-        internal
-        pure
-        returns (bool)
+    internal
+    pure
+    returns (bool)
     {
         if (self._len < needle._len) {
             return false;
@@ -464,8 +464,8 @@ library strings {
             let length := mload(needle)
             let needleptr := mload(add(needle, 0x20))
             equal := eq(
-                keccak256(selfptr, length),
-                keccak256(needleptr, length)
+            keccak256(selfptr, length),
+            keccak256(needleptr, length)
             )
         }
 
@@ -480,9 +480,9 @@ library strings {
      * @return `self`
      */
     function until(slice memory self, slice memory needle)
-        internal
-        pure
-        returns (slice memory)
+    internal
+    pure
+    returns (slice memory)
     {
         if (self._len < needle._len) {
             return self;
@@ -495,8 +495,8 @@ library strings {
                 let length := mload(needle)
                 let needleptr := mload(add(needle, 0x20))
                 equal := eq(
-                    keccak256(selfptr, length),
-                    keccak256(needleptr, length)
+                keccak256(selfptr, length),
+                keccak256(needleptr, length)
                 )
             }
         }
@@ -511,9 +511,9 @@ library strings {
     // Returns the memory address of the first byte of the first occurrence of
     // `needle` in `self`, or the first byte after `self` if not found.
     function findPtr(uint selflen, uint selfptr, uint needlelen, uint needleptr)
-        private
-        pure
-        returns (uint)
+    private
+    pure
+    returns (uint)
     {
         uint ptr = selfptr;
         uint idx;
@@ -623,9 +623,9 @@ library strings {
      * @return `self`.
      */
     function find(slice memory self, slice memory needle)
-        internal
-        pure
-        returns (slice memory)
+    internal
+    pure
+    returns (slice memory)
     {
         uint ptr = findPtr(self._len, self._ptr, needle._len, needle._ptr);
         self._len -= ptr - self._ptr;
@@ -642,9 +642,9 @@ library strings {
      * @return `self`.
      */
     function rfind(slice memory self, slice memory needle)
-        internal
-        pure
-        returns (slice memory)
+    internal
+    pure
+    returns (slice memory)
     {
         uint ptr = rfindPtr(self._len, self._ptr, needle._len, needle._ptr);
         self._len = ptr - self._ptr;
@@ -662,9 +662,9 @@ library strings {
      * @return `token`.
      */
     function split(slice memory self, slice memory needle, slice memory token)
-        internal
-        pure
-        returns (slice memory)
+    internal
+    pure
+    returns (slice memory)
     {
         uint ptr = findPtr(self._len, self._ptr, needle._len, needle._ptr);
         token._ptr = self._ptr;
@@ -689,9 +689,9 @@ library strings {
      * @return The part of `self` up to the first occurrence of `delim`.
      */
     function split(slice memory self, slice memory needle)
-        internal
-        pure
-        returns (slice memory token)
+    internal
+    pure
+    returns (slice memory token)
     {
         split(self, needle, token);
     }
@@ -707,9 +707,9 @@ library strings {
      * @return `token`.
      */
     function rsplit(slice memory self, slice memory needle, slice memory token)
-        internal
-        pure
-        returns (slice memory)
+    internal
+    pure
+    returns (slice memory)
     {
         uint ptr = rfindPtr(self._len, self._ptr, needle._len, needle._ptr);
         token._ptr = ptr;
@@ -733,9 +733,9 @@ library strings {
      * @return The part of `self` after the last occurrence of `delim`.
      */
     function rsplit(slice memory self, slice memory needle)
-        internal
-        pure
-        returns (slice memory token)
+    internal
+    pure
+    returns (slice memory token)
     {
         rsplit(self, needle, token);
     }
@@ -747,9 +747,9 @@ library strings {
      * @return The number of occurrences of `needle` found in `self`.
      */
     function count(slice memory self, slice memory needle)
-        internal
-        pure
-        returns (uint cnt)
+    internal
+    pure
+    returns (uint cnt)
     {
         uint ptr = findPtr(
             self._len,
@@ -775,9 +775,9 @@ library strings {
      * @return True if `needle` is found in `self`, false otherwise.
      */
     function contains(slice memory self, slice memory needle)
-        internal
-        pure
-        returns (bool)
+    internal
+    pure
+    returns (bool)
     {
         return rfindPtr(
             self._len,
@@ -795,9 +795,9 @@ library strings {
      * @return The concatenation of the two strings.
      */
     function concat(slice memory self, slice memory other)
-        internal
-        pure
-        returns (string memory)
+    internal
+    pure
+    returns (string memory)
     {
         string memory ret = new string(self._len + other._len);
         uint retptr;
@@ -818,9 +818,9 @@ library strings {
      *         joined with `self`.
      */
     function join(slice memory self, slice[] memory parts)
-        internal
-        pure
-        returns (string memory)
+    internal
+    pure
+    returns (string memory)
     {
         if (parts.length == 0) return "";
 
@@ -843,5 +843,63 @@ library strings {
         }
 
         return ret;
+    }
+
+    function parseInt(string memory self)
+    internal
+    pure
+    returns (uint _parsedInt)
+    {
+        return parseInt(self, 0);
+    }
+
+    function parseInt(string memory self, uint _b)
+    internal
+    pure
+    returns (uint _parsedInt)
+    {
+        bytes memory bresult = bytes(self);
+        uint mint = 0;
+        bool decimals = false;
+        for (uint i = 0; i < bresult.length; i++) {
+            if ((uint(uint8(bresult[i])) >= 48) && (uint(
+                uint8(bresult[i])
+            ) <= 57)) {
+                if (decimals) {
+                    if (_b == 0) {
+                        break;
+                    } else {
+                        _b--;
+                    }
+                }
+                mint *= 10;
+                mint += uint(uint8(bresult[i])) - 48;
+            } else if (uint(uint8(bresult[i])) == 46) {
+                decimals = true;
+            }
+        }
+        if (_b > 0) {
+            mint *= 10 ** _b;
+        }
+        return mint;
+    }
+
+    function toString(uint256 _i) internal pure returns (string memory _uintAsString) {
+        if (_i == 0) {
+            return "0";
+        }
+        uint256 j = _i;
+        uint256 len;
+        while (j != 0) {
+            len++;
+            j /= 10;
+        }
+        bytes memory bstr = new bytes(len);
+        uint256 k = len - 1;
+        while (_i != 0) {
+            bstr[k--] = byte(uint8(48 + _i % 10));
+            _i /= 10;
+        }
+        return string(bstr);
     }
 }

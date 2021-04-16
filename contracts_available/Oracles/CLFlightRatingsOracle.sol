@@ -8,12 +8,14 @@
  *
  */
 
-pragma solidity 0.5.14;
+pragma solidity 0.6.11;
+// SPDX-License-Identifier: Apache-2.0
 
-import "chainlink/v0.5/contracts/ChainlinkClient.sol";
-import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
-import "./strings.sol";
-import "../../Oracle.sol";
+
+import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
+import "openzeppelin-solidity/contracts/access/Ownable.sol";
+import "../Utilities/strings.sol";
+import "@etherisc/gif-contracts/contracts/Oracle.sol";
 
 contract CLFlightRatingsOracle is Ownable, Oracle, ChainlinkClient {
     using strings for *;
@@ -77,7 +79,7 @@ contract CLFlightRatingsOracle is Ownable, Oracle, ChainlinkClient {
      * @notice Creates a request to the stored Oracle contract address
      */
     function request(uint256 _erRequestId, bytes calldata _input)
-    external
+    external override
     onlyQuery
     {
         Chainlink.Request memory req = buildChainlinkRequest(jobId, address(this), this.fulfill.selector);

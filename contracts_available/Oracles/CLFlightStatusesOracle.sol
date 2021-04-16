@@ -8,11 +8,13 @@
  *
  */
 
-pragma solidity 0.5.14;
+pragma solidity 0.6.11;
+// SPDX-License-Identifier: Apache-2.0
 
-import "chainlink/v0.5/contracts/ChainlinkClient.sol";
-import "../../Oracle.sol";
-import "./strings.sol";
+
+import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
+import "@etherisc/gif-contracts/contracts/Oracle.sol";
+import "../Utilities/strings.sol";
 
 contract CLFlightStatusesOracle is ChainlinkClient, Oracle {
     using strings for *;
@@ -83,7 +85,7 @@ contract CLFlightStatusesOracle is ChainlinkClient, Oracle {
      * @notice Creates a request to the stored Oracle contract address
      */
     function request(uint256 _erRequestId, bytes calldata _input)
-    external
+    external override
     onlyQuery
     {
         Chainlink.Request memory req = buildChainlinkRequest(jobId, address(this), this.fulfill.selector);
@@ -195,4 +197,5 @@ contract CLFlightStatusesOracle is ChainlinkClient, Oracle {
     {
         cancelChainlinkRequest(_requestId, _payment, _callbackFunctionId, _expiration);
     }
+
 }

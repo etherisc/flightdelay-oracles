@@ -1,8 +1,9 @@
-pragma solidity 0.5.12;
+pragma solidity 0.6.11;
+// SPDX-License-Identifier: Apache-2.0
 
-import "../GIF/Oracle.sol";
+import "@etherisc/gif-contracts/contracts/Oracle.sol";
 import "./etheriscOracleAPI.sol";
-import "./strings.sol";
+import "../Utilities/strings.sol";
 
 contract FlightStatusesOracle is Oracle, usingEtheriscOracle {
     using strings for *;
@@ -34,7 +35,10 @@ contract FlightStatusesOracle is Oracle, usingEtheriscOracle {
     {
     }
 
-    function request(uint256 _requestId, bytes calldata _input) external onlyQuery {
+    function request(uint256 _requestId, bytes calldata _input)
+        external override
+        onlyQuery
+    {
         // todo: set permissions
 
         (uint256 oracleTime, bytes32 carrierFlightNumber, bytes32 departureYearMonthDay) = abi.decode(
@@ -61,7 +65,7 @@ contract FlightStatusesOracle is Oracle, usingEtheriscOracle {
         bytes32 _queryId,
         string memory _result
     )
-        public
+        public override
         onlyOracle
     {
         uint256 requestId = requests[_queryId];
@@ -140,6 +144,7 @@ contract FlightStatusesOracle is Oracle, usingEtheriscOracle {
 
         _oracleUrl = url;
     }
+
 
     function b32toString(bytes32 x) internal pure returns (string memory) {
         // gas usage: about 1K gas per char.

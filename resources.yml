@@ -13,9 +13,11 @@ contracts:
 
   - Oracles/FlightRatingsOracle.sol
   - Oracles/FlightStatusesOracle.sol
+  - Oracles/CLFlightRatingsOracle.sol
+  - Oracles/CLFlightStatusesOracle.sol
   - Oracles/etheriscOracleAPI.sol
-  - Oracles/strings.sol
-  - Oracles/etheriscAddressResolver.sol
+  - Utilities/strings.sol
+  - Utilities/etheriscAddressResolver.sol
 
 #
 #   Migrations:

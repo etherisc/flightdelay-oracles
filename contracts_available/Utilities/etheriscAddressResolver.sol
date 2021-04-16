@@ -1,6 +1,7 @@
-pragma solidity 0.5.12;
+pragma solidity 0.6.11;
+// SPDX-License-Identifier: Apache-2.0
 
-import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "openzeppelin-solidity/contracts/access/Ownable.sol";
 
 contract etheriscAddressResolver is Ownable {
 

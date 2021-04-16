@@ -3,6 +3,9 @@ const { Command } = require('@oclif/command');
 const fs = require('fs-jetpack');
 const crypto = require('crypto');
 
+
+const contracts_directory = 'contracts_available';
+
 /**
  * Set solc compiler version
  */
@@ -11,7 +14,7 @@ class UpdateSolcVersion extends Command {
    * Get required version and update smart contracts files
    */
   run() {
-    fs.find('contracts', { matching: '*.sol' })
+    fs.find(contracts_directory, { matching: '*.sol' })
       .forEach((contract) => {
         const input = fs.read(contract, 'utf8');
         const inputHash = crypto.createHash('md5').update(input).digest('hex');

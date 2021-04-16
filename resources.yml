@@ -11,21 +11,23 @@
 contracts:
   - Migrations.sol
 
-  - Oracles/FlightRatingsOracle.sol
-  - Oracles/FlightStatusesOracle.sol
+#  - Oracles/FlightRatingsOracle.sol
+#  - Oracles/FlightStatusesOracle.sol
   - Oracles/CLFlightRatingsOracle.sol
   - Oracles/CLFlightStatusesOracle.sol
-  - Oracles/etheriscOracleAPI.sol
+#  - Oracles/etheriscOracleAPI.sol
   - Utilities/strings.sol
-  - Utilities/etheriscAddressResolver.sol
+#  - Utilities/etheriscAddressResolver.sol
 
 #
 #   Migrations:
 #
 migrations:
   - 01_initial_migration.js
-  - 102_deploy_FlightRatingsOracle.js
-  - 103_deploy_FlightStatusesOracle.js
+#  - 102_deploy_FlightRatingsOracle.js
+#  - 103_deploy_FlightStatusesOracle.js
+  - 112_deploy_CLFlightRatingsOracle.js
+  - 113_deploy_CLFlightStatusesOracle.js
 
 #
 #   Tests:

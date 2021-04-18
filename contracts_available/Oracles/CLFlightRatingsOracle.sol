@@ -34,27 +34,27 @@ contract CLFlightRatingsOracle is Ownable, Oracle, ChainlinkClient {
      * and Etherisc oracle service contract addresses.
      * @dev Sets the storage for the specified addresses
      * @param _link The address of the LINK token contract
-     * @param _clOracle The Chainlink oracle contract address to send the request to
-     * @param _erOracleService The Etherisc oracle service contract address to return results to
+     * @param _chainLinkOracle The Chainlink oracle contract address to send the request to
+     * @param _etheriscOracleService The Etherisc oracle service contract address to return results to
      * @param _jobId The bytes32 JobID to be executed
      * @param _payment The payment to send to the oracle
      */
     constructor(
         address _link,
-        address _clOracle,
-        address _erOracleService,
+        address _chainLinkOracle,
+        address _etheriscOracleService,
         bytes32 _jobId,
         uint256 _payment
     )
     public
-    Oracle(_erOracleService)
+    Oracle(_etheriscOracleService)
     {
         if (_link == address(0)) {
             setPublicChainlinkToken();
         } else {
             setChainlinkToken(_link);
         }
-        _updateRequestDetails(_clOracle, _jobId, _payment);
+        _updateRequestDetails(_chainLinkOracle, _jobId, _payment);
     }
 
     function updateRequestDetails(

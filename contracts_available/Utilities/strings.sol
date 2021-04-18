@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 /*
  * @title String & slice utility library for Solidity contracts.
  * @author Nick Johnson <arachnid@notdot.net>
@@ -889,13 +891,13 @@ library strings {
             return "0";
         }
         uint256 j = _i;
-        uint256 len;
+        uint256 strlen;
         while (j != 0) {
-            len++;
+            strlen++;
             j /= 10;
         }
-        bytes memory bstr = new bytes(len);
-        uint256 k = len - 1;
+        bytes memory bstr = new bytes(strlen);
+        uint256 k = strlen - 1;
         while (_i != 0) {
             bstr[k--] = byte(uint8(48 + _i % 10));
             _i /= 10;

@@ -13,7 +13,7 @@ pragma solidity 0.6.11;
 
 
 import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
-import "@etherisc/gif-contracts/contracts/Oracle.sol";
+import "@etherisc/gif-interface/contracts/Oracle.sol";
 import "../Utilities/strings.sol";
 
 contract CLFlightStatusesOracle is ChainlinkClient, Oracle {

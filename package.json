@@ -40,11 +40,12 @@
   },
   "dependencies": {
     "@chainlink/contracts": "^0.1.7",
-    "@etherisc/gif-contracts": "^1.2.2",
+    "@etherisc/gif-interface": "^1.0.4",
     "@etherisc/gifcli": "^1.3.4",
     "@etherisc/microservice": "^0.6.1-sandbox",
     "@oclif/command": "^1.8.0",
     "@oclif/errors": "^1.3.4",
+    "@openzeppelin/contracts": "^4.0.0",
     "@truffle/hdwallet-provider": "^1.3.0",
     "abi-decoder": "^1.2.0",
     "axios": "^0.21.1",

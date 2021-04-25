@@ -15,7 +15,7 @@ pragma solidity 0.6.11;
 import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
 import "openzeppelin-solidity/contracts/access/Ownable.sol";
 import "../Utilities/strings.sol";
-import "@etherisc/gif-contracts/contracts/Oracle.sol";
+import "@etherisc/gif-interface/contracts/Oracle.sol";
 
 contract CLFlightRatingsOracle is Ownable, Oracle, ChainlinkClient {
     using strings for *;

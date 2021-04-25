@@ -2,7 +2,7 @@ const Gifcli = require('@etherisc/gifcli');
 const { web3utils, logger: { info } } = require('../io/module')(web3, artifacts);
 const abiDecoder = require('abi-decoder');
 
-const FlightStatusesOracle = artifacts.require('examples/ChainlinkOracles/CLFlightStatusesOracle.sol');
+const FlightStatusesOracle = artifacts.require('oracles/CLFlightStatusesOracle.sol');
 
 module.exports = async (deployer, networks, accounts) => {
 
@@ -32,6 +32,33 @@ module.exports = async (deployer, networks, accounts) => {
     OracleOwnerServiceDeployed.address
   );
   const bytes32FlightStatuses = web3utils.bytes(32, 'FlightStatuses');
+  const oracleType = await Query.methods.oracleTypes(bytes32FlightStatuses).call();
+
+  if (!oracleType.initialized) {
+    info('Propose OracleType');
+    await OracleOwnerService.methods.proposeOracleType(
+      web3utils.bytes(32, 'FlightStatuses'),
+      '(uint256 time,bytes32 carrierFlightNumber,bytes32 departureYearMonthDay)',
+      '(bytes1 status,int256 delay)',
+      'FlightStatuses oracle'
+    )
+    .send({ from,  gas: 300000 })
+    .on('transactionHash', txHash => info(`transaction hash: ${txHash}\n`));
+  } else {
+    console.log('OracleType already initialized.')
+  }
+
+  if (oracleType.state !== '1') {
+    info('Activate FlightStatuses OracleType');
+    await InstanceOperatorService.methods.activateOracleType(
+      bytes32FlightStatuses
+    )
+    .send({ from, gas: 200000 })
+    .on('transactionHash', txHash => info(`transaction hash: ${txHash}\n`));
+  } else {
+    console.log('OracleType already activated.')
+  }
+
   // Deploy FlightStatusesOracle
   const flightStatusesOracle = await deployer.deploy(
     FlightStatusesOracle,
@@ -46,83 +73,39 @@ module.exports = async (deployer, networks, accounts) => {
     },
   );
 
-  /*
-  info('Propose FlightStatuses OracleType');
-  await OracleOwnerService.methods.proposeOracleType(
-    web3utils.bytes(32, 'FlightStatuses'),
-    '(uint256 time,bytes32 carrierFlightNumber,bytes32 departureYearMonthDay)',
-    '(bytes1 status,int256 delay)',
-    'FlightStatuses oracle'
-  )
-  .send({ from,  gas: 300000 })
-  .on('transactionHash', txHash => info(`transaction hash: ${txHash}\n`));
-
-  info('Activate FlightStatuses OracleType');
-  await InstanceOperatorService.methods.activateOracleType(
-    bytes32FlightStatuses
-  )
-  .send({ from, gas: 200000 })
-  .on('transactionHash', txHash => info(`transaction hash: ${txHash}\n`));
-  */
-
   info('Propose FlightStatusesOracle as oracle');
-  await new Promise((resolve) => {
-    OracleOwnerService.methods.proposeOracle(
+  await OracleOwnerService.methods.proposeOracle(
       flightStatusesOracle.address,
       'Chainlink FlightStatuses oracle'
     )
     .send({ from, gas: 200000 })
-    .on('transactionHash', txHash => info(`transaction hash: ${txHash}\n`))
-    .on('receipt', receipt => {
-      resolve(receipt);
-    });
-  });
+    .on('transactionHash', txHash => info(`transaction hash: ${txHash}\n`));
 
   const oracleId = await Query.methods.oracleIdByAddress(flightStatusesOracle.address).call();
 
   info(`Activate FlightStatuses Oracle, oracleId = ${oracleId}`);
-  await new Promise((resolve) => {
-    InstanceOperatorServiceDeployed
-    InstanceOperatorService.methods.activateOracle(
+  await InstanceOperatorService.methods.activateOracle(
       oracleId
     )
     .send({ from, gas: 200000 })
-    .on('transactionHash', txHash => info(`transaction hash: ${txHash}\n`))
-    .on('receipt', receipt => {
-      resolve(receipt);
-    });
-  });
+    .on('transactionHash', txHash => info(`transaction hash: ${txHash}\n`));
 
   info('Propose FlightStatusesOracle to FlightStatuses OracleType');
-  const proposalId = await new Promise(resolve => {
-    OracleOwnerService.methods.proposeOracleToType(
+  await OracleOwnerService.methods.proposeOracleToOracleType(
       bytes32FlightStatuses,
       oracleId
     )
     .send({ from, gas: 200000 })
-    .on('transactionHash', txHash => info(`transaction hash: ${txHash}\n`))
-    .on('receipt', async receipt => {
-      // console.log(receipt);
-      // const logs1 = abiDecoder.decodeLogs(receipt.logs);
-      // console.log(JSON.stringify(logs1, null, 2));
-      info('Waiting for 10 seconds for tx receipt ...')
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-      const txHash = receipt.transactionHash;
-      const txReceipt = await web3.eth.getTransactionReceipt(txHash);
-      const logs = abiDecoder.decodeLogs(txReceipt.logs);
-      const LogOracleProposedToType = logs.filter(item => item.name === 'LogOracleProposedToType')[0];
-      const proposalIdValue = LogOracleProposedToType.events.filter(item => item.name === 'proposalId')[0];
-      resolve(parseInt(proposalIdValue.value));
-    });
-  });
+    .on('transactionHash', txHash => info(`transaction hash: ${txHash}\n`));
 
-  info(`Assign FlightStatusesOracle to FlightStatuses OracleType, proposalId = ${proposalId}`);
+  info(`Assign FlightStatusesOracle to FlightStatuses OracleType, oracleId = ${oracleId}`);
   await InstanceOperatorService.methods.assignOracleToOracleType(
     bytes32FlightStatuses,
-    proposalId
+    oracleId
   )
   .send({ from, gas: 200000 })
   .on('transactionHash', txHash => info(`transaction hash: ${txHash}\n`));
+
 };
 
 

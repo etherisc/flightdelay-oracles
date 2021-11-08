@@ -13,8 +13,11 @@ contracts:
 
 #  - Oracles/FlightRatingsOracle.sol
 #  - Oracles/FlightStatusesOracle.sol
+  - Oracles/ChainlinkOracle.sol
   - Oracles/CLFlightRatingsOracle.sol
   - Oracles/CLFlightStatusesOracle.sol
+#  - Oracles/MockFlightRatingsOracle.sol
+#  - Oracles/MockFlightStatusesOracle.sol
 #  - Oracles/etheriscOracleAPI.sol
   - Utilities/strings.sol
 #  - Utilities/etheriscAddressResolver.sol
@@ -29,6 +32,8 @@ migrations:
 #  - 103_deploy_FlightStatusesOracle.js
   - 112_deploy_CLFlightRatingsOracle.js
   - 113_deploy_CLFlightStatusesOracle.js
+#  - 122_deploy_MockFlightRatingsOracle.js
+#  - 123_deploy_MockFlightStatusesOracle.js
 
 #
 #   Tests:

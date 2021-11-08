@@ -43,6 +43,7 @@
     "@chainlink/contracts": "^0.2.1",
     "@etherisc/gif-connect": "^1.0.5",
     "@etherisc/gif-interface": "^1.1.24",
+    "@etherisc/gif-tools": "^0.1.4",
     "@oclif/command": "^1.8.0",
     "@oclif/errors": "^1.3.4",
     "@truffle/hdwallet-provider": "^1.2.1",

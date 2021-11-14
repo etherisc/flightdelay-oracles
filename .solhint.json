@@ -1,7 +1,6 @@
 {
   "extends": "default",
   "rules": {
-    "two-lines-top-level-separator": false,
     "bracket-align": "warn",
     "code-complexity": "warn",
     "const-name-snakecase": "warn",

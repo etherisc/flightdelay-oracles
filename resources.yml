@@ -27,7 +27,6 @@ contracts:
 #
 migrations:
   - 01_initial_migration.js
-#  - 100_deploy_Test_GIF.js
 #  - 102_deploy_FlightRatingsOracle.js
 #  - 103_deploy_FlightStatusesOracle.js
   - 112_deploy_CLFlightRatingsOracle.js

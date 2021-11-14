@@ -47,7 +47,7 @@ contract MockFlightStatusesOracle is Ownable, Oracle {
         _respond(_requestId, abi.encode(status, delay));
 
         emit Request(_requestId, checkAtTime, carrierFlightNumber, departureYearMonthDay);
-        emit Fulfill(status, arrivalGateDelayMinutes);
+        emit Fulfill(status, delay);
     }
 
 }

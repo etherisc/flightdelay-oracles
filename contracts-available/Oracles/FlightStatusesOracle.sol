@@ -1,7 +1,7 @@
 pragma solidity 0.6.11;
 // SPDX-License-Identifier: Apache-2.0
 
-import "@etherisc/gif-contracts/contracts/Oracle.sol";
+import "@etherisc/gif-interface/contracts/Oracle.sol";
 import "./etheriscOracleAPI.sol";
 import "../Utilities/strings.sol";
 

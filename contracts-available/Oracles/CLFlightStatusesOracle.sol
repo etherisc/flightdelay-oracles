@@ -4,8 +4,6 @@
  * @dev This contract is designed to work on multiple networks, including
  * local test networks
  *
- * Deployed on rinkeby at 0xFbAbbC5c0Be7a2eE474FEE6F1bBD77D97ae45850
- *
  */
 
 pragma solidity 0.7.6;
@@ -63,40 +61,29 @@ contract CLFlightStatusesOracle is ChainlinkOracle {
         emit Request(chainlinkRequestId, _gifRequestId, checkAtTime, carrierFlightNumber, departureYearMonthDay);
     }
 
-    function fulfill(bytes32 _chainlinkRequestId, bytes32 _data)
+    function fulfill(bytes32 _chainlinkRequestId, bytes1 _status, bool _arrived, uint256 _delay)
     public
     recordChainlinkFulfillment(_chainlinkRequestId)
     {
-        strings.slice memory slResult = _data.toSliceB32();
-        require(slResult.len() > 0, "ERROR:CFS-001:EMPTY_RESULT");
-        require(slResult.count(",".toSlice()) == 2, "ERROR:CFS-002:INVALID_RESULT");
 
-        bytes1 status = bytes(slResult.split(",".toSlice()).toString())[0];
-        bool arrived;
-        uint256 arrivalGateDelayMinutes;
-
-        if (status == "C") {
+        if (_status == "C") {
             // Flight cancelled
-            _respond(requests[_chainlinkRequestId], abi.encode(status, -1));
-        } else if (status == "D") {
+            _respond(requests[_chainlinkRequestId], abi.encode(_status, -1));
+        } else if (_status == "D") {
             // Flight diverted
-            _respond(requests[_chainlinkRequestId], abi.encode(status, -1));
-        } else if (status != "L" && status != "A" && status != "C" && status != "D") {
-            // Unprocessable status
-            _respond(requests[_chainlinkRequestId], abi.encode(status, -1));
+            _respond(requests[_chainlinkRequestId], abi.encode(_status, -1));
+        } else if (_status != "L" && _status != "A" && _status != "C" && _status != "D") {
+            // Unprocessable _status
+            _respond(requests[_chainlinkRequestId], abi.encode(_status, -1));
         } else {
-            strings.slice memory slArrivalGateDelayMinutes = slResult.split(",".toSlice());
-            arrived = slResult.split(",".toSlice()).compare("true".toSlice()) == 0;
-
-            if (status == "A" || (status == "L" && !arrived)) {
+            if (_status == "A" || (_status == "L" && !_arrived)) {
                 // Flight still active or not at gate
                 _respond(requests[_chainlinkRequestId], abi.encode(bytes1("A"), -1));
-            } else if (status == "L" && arrived) {
-                arrivalGateDelayMinutes = slArrivalGateDelayMinutes.len() == 0 ? 0 : slArrivalGateDelayMinutes.toString().parseInt();
-                _respond(requests[_chainlinkRequestId], abi.encode(status, arrivalGateDelayMinutes));
+            } else if (_status == "L" && _arrived) {
+                _respond(requests[_chainlinkRequestId], abi.encode(_status, _delay));
             } else {
-                // No delay info
-                _respond(requests[_chainlinkRequestId], abi.encode(status, -1));
+                // No _delay info
+                _respond(requests[_chainlinkRequestId], abi.encode(_status, -1));
             }
         }
 
@@ -104,7 +91,7 @@ contract CLFlightStatusesOracle is ChainlinkOracle {
 
         updatedHeight = block.number;
 
-        emit Fulfill(status, arrived, arrivalGateDelayMinutes);
+        emit Fulfill(_status, _arrived, _delay);
     }
 
 }

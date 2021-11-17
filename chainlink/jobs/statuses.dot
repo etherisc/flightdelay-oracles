@@ -1,4 +1,7 @@
 digraph {
+//
+// Chainlink Job definition for the statuses oracle
+//
 
 // First, we parse the request log and the CBOR payload inside of it
 decode_log [
@@ -26,6 +29,7 @@ url = "https://fs-api.etherisc.com/api/v1/status-oracle"
 
 // From the fetch result, we parse out the individual elements (rating statistics)
 status [type= "jsonparse" data = "$(fetch)" path = "status"]
+arrived [type = "jsonparse" data = "$(fetch)" path = "arrived" ]
 delay [type = "jsonparse" data = "$(fetch)" path = "delay" ]
 
 
@@ -33,13 +37,13 @@ delay [type = "jsonparse" data = "$(fetch)" path = "delay" ]
  // The abi is the abi of the fulfill function in the receiving contract.
 encode_response [
 type = "ethabiencode"
-abi = "(bytes32 requestId, uint256 status, uint256 delay)"
-data= "{\"requestId\": $(decode_log.requestId), \"status\": $(status), \"delay\": $(delay)}"
+abi = "(bytes32 requestId, uint8 status, bool arrived, uint256 delay)"
+data= "{\"requestId\": $(decode_log.requestId), \"status\": $(status), \"arrived\": $(arrived), \"delay\": $(delay)}"
 ]
 
 encode_tx [
 type = "ethabiencode"
-abi = "fulfillOracleRequest(bytes32 requestId, uint256 payment, address callbackAddress, bytes4 callbackFunctionId, uint256 expiration, bytes calldata data)"
+abi = "fulfillOracleRequest2(bytes32 requestId, uint256 payment, address callbackAddress, bytes4 callbackFunctionId, uint256 expiration, bytes calldata data)"
 data = "{\"requestId\": $(decode_log.requestId), \"payment\": $(decode_log.payment), \"callbackAddress\": $(decode_log.callbackAddr), \"callbackFunctionId\": $(decode_log.callbackFunctionId), \"expiration\": $(decode_log.cancelExpiration), \"data\": $(encode_response)}"
 ]
 
@@ -54,6 +58,7 @@ data = "$(encode_tx)"
 decode_log -> decode_cbor -> fetch
 
 fetch -> status -> encode_response
+fetch -> arrived -> encode_response
 fetch -> delay -> encode_response
 
 encode_response -> encode_tx -> submit_tx

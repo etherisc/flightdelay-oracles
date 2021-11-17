@@ -1,4 +1,7 @@
 digraph {
+//
+// Chainlink Job definition for the ratings oracle
+//
 
 // First, we parse the request log and the CBOR payload inside of it
 decode_log [
@@ -25,28 +28,35 @@ fetch [
 
 
 // From the fetch result, we parse out the individual elements (rating statistics)
-s_1 [ type="jsonparse" data="$(fetch)" path="s_1" ]
-s_2 [ type="jsonparse" data="$(fetch)" path="s_2" ]
-s_3 [ type="jsonparse" data="$(fetch)" path="s_3" ]
-s_4 [ type="jsonparse" data="$(fetch)" path="s_4" ]
-s_5 [ type="jsonparse" data="$(fetch)" path="s_5" ]
-s_6 [ type="jsonparse" data="$(fetch)" path="s_6" ]
+observations [ type="jsonparse" data="$(fetch)" path="observations" ]
+late15 [ type="jsonparse" data="$(fetch)" path="late15" ]
+late30 [ type="jsonparse" data="$(fetch)" path="late30" ]
+late45 [ type="jsonparse" data="$(fetch)" path="late45" ]
+cancelled [ type="jsonparse" data="$(fetch)" path="cancelled" ]
+diverted [ type="jsonparse" data="$(fetch)" path="diverted" ]
 
 
 // Finally, we send a response on-chain.
 // The abi is the abi of the fulfill function in the receiving contract.
 encode_response [
 type="ethabiencode"
-abi="(bytes32 requestId, uint256 s_1, uint256 s_2, uint256 s_3, uint256 s_4, uint256 s_5, uint256 s_6)"
-data="{\"requestId\": $(decode_log.requestId), \"s_1\": $(s_1), \"s_2\": $(s_2), \"s_3\": $(s_3), \"s_4\": $(s_4), \"s_5\": $(s_5), \"s_6\": $(s_6)}"
+abi="(bytes32 requestId, uint256 observations, uint256 late15, uint256 late30, uint256 late45, uint256 cancelled, uint256 diverted)"
+data="{\"requestId\": $(decode_log.requestId), \"observations\": $(observations), \"late15\": $(late15), \"late30\": $(late30), \"late45\": $(late45), \"cancelled\": $(cancelled), \"diverted\": $(diverted)}"
 ]
 
 encode_tx [
 type="ethabiencode"
-abi="fulfillOracleRequest(bytes32 requestId, uint256 payment, address callbackAddress, bytes4 callbackFunctionId, uint256 expiration, bytes calldata data)"
+abi="fulfillOracleRequest2(bytes32 requestId, uint256 payment, address callbackAddress, bytes4 callbackFunctionId, uint256 expiration, bytes calldata data)"
 data="{\"requestId\": $(decode_log.requestId), \"payment\": $(decode_log.payment), \"callbackAddress\": $(decode_log.callbackAddr), \"callbackFunctionId\": $(decode_log.callbackFunctionId), \"expiration\": $(decode_log.cancelExpiration), \"data\": $(encode_response)}"
 ]
-
+//function fulfillOracleRequest(
+ //    bytes32 requestId,
+ //    uint256 payment,
+ //    address callbackAddress,
+ //    bytes4 callbackFunctionId,
+ //    uint256 expiration,
+ //    bytes32 data
+ //  )
 submit_tx [
 type="ethtx"
 to="0xd006d393b49f89677722Ed04A26Ab83C74B1aC0e"
@@ -57,12 +67,12 @@ data="$(encode_tx)"
 
 decode_log -> decode_cbor -> fetch
 
-fetch -> s_1 -> encode_response
-fetch -> s_2 -> encode_response
-fetch -> s_3 -> encode_response
-fetch -> s_4 -> encode_response
-fetch -> s_5 -> encode_response
-fetch -> s_6 -> encode_response
+fetch -> observations -> encode_response
+fetch -> late15 -> encode_response
+fetch -> late30 -> encode_response
+fetch -> late45 -> encode_response
+fetch -> cancelled -> encode_response
+fetch -> diverted -> encode_response
 
 encode_response -> encode_tx -> submit_tx
 

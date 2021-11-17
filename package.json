@@ -17,7 +17,9 @@
   },
   "scripts": {
     "clean": "echo 'Clean repository'; rimraf build coverage",
-    "lint": "echo 'Lint contracts'; solhint \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"contracts-available/**/*.sol\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\""
+    "lint": "echo 'Lint contracts'; solhint \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"contracts-available/**/*.sol\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"",
+    "gen-rating-toml": "echo 'Generate Ratings TOML'; cd chainlink/jobs; node generate-toml ratings.template.toml ratings.dot ratings.toml",
+    "gen-status-toml": "echo 'Generate Statuses TOML'; cd chainlink/jobs; node generate-toml statuses.template.toml statuses.dot statuses.toml"
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.16.3",

@@ -18,6 +18,7 @@ contracts:
   - Oracles/CLFlightRatingsOracle.sol
   - Oracles/CLFlightStatusesOracle.sol
   - Oracles/TestCLFlightRatingsOracle.sol
+  - Oracles/TestCLFlightStatusesOracle.sol
 #  - Oracles/MockFlightRatingsOracle.sol
 #  - Oracles/MockFlightStatusesOracle.sol
 #  - Oracles/etheriscOracleAPI.sol
@@ -36,6 +37,7 @@ migrations:
 #  - 122_deploy_MockFlightRatingsOracle.js
 #  - 123_deploy_MockFlightStatusesOracle.js
   - 212_deploy_TestCLFlightRatingsOracle.js
+  - 213_deploy_TestCLFlightStatusesOracle.js
   - 900_deploy_Chainlink_Operator.js
 #
 #   Tests:

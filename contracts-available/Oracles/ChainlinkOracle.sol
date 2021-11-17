@@ -6,14 +6,14 @@
  *
  */
 
-pragma solidity 0.6.11;
+pragma solidity 0.7.6;
 // SPDX-License-Identifier: Apache-2.0
 
 
-import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
+import "@chainlink/contracts/src/v0.7/ChainlinkClient.sol";
 import "openzeppelin-solidity/contracts/access/Ownable.sol";
 import "../Utilities/strings.sol";
-import "@etherisc/gif-interface/contracts/Oracle.sol";
+import "@etherisc/gif-interface/contracts/0.7/Oracle.sol";
 
 abstract contract ChainlinkOracle is Ownable, Oracle, ChainlinkClient {
     using strings for *;
@@ -35,7 +35,6 @@ abstract contract ChainlinkOracle is Ownable, Oracle, ChainlinkClient {
         bytes32 _jobId,
         uint256 _payment
     )
-    public
     Oracle(_oracleService, _oracleOwnerService, _oracleType, _oracleName)
     {
         if (_link == address(0)) {

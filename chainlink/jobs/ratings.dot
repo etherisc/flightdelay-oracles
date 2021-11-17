@@ -1,0 +1,69 @@
+digraph {
+
+// First, we parse the request log and the CBOR payload inside of it
+decode_log [
+    type="ethabidecodelog"
+    abi="OracleRequest(bytes32 indexed specId, address requester, bytes32 requestId, uint256 payment, address callbackAddr, bytes4 callbackFunctionId, uint256 cancelExpiration, uint256 dataVersion, bytes data)"
+    data="$(jobRun.logData)"
+    topics="$(jobRun.logTopics)"
+    ]
+
+// The result of the following element is a map e.g. {carrier: "LH", flightNumber: "117"}
+decode_cbor [
+    type="cborparse"
+    data="$(decode_log.data)"
+    ]
+
+
+// Then, we use the decoded request parameters to make an HTTP fetch
+fetch [
+    type="http"
+    method=GET
+    requestData="{\"carrier\": $(decode_cbor.carrier), \"flightNumber\": $(decode_cbor.flightNumber)}"
+    url="https://fs-api.etherisc.com/api/v1/ratings-oracle"
+    ]
+
+
+// From the fetch result, we parse out the individual elements (rating statistics)
+s_1 [ type="jsonparse" data="$(fetch)" path="s_1" ]
+s_2 [ type="jsonparse" data="$(fetch)" path="s_2" ]
+s_3 [ type="jsonparse" data="$(fetch)" path="s_3" ]
+s_4 [ type="jsonparse" data="$(fetch)" path="s_4" ]
+s_5 [ type="jsonparse" data="$(fetch)" path="s_5" ]
+s_6 [ type="jsonparse" data="$(fetch)" path="s_6" ]
+
+
+// Finally, we send a response on-chain.
+// The abi is the abi of the fulfill function in the receiving contract.
+encode_response [
+type="ethabiencode"
+abi="(bytes32 requestId, uint256 s_1, uint256 s_2, uint256 s_3, uint256 s_4, uint256 s_5, uint256 s_6)"
+data="{\"requestId\": $(decode_log.requestId), \"s_1\": $(s_1), \"s_2\": $(s_2), \"s_3\": $(s_3), \"s_4\": $(s_4), \"s_5\": $(s_5), \"s_6\": $(s_6)}"
+]
+
+encode_tx [
+type="ethabiencode"
+abi="fulfillOracleRequest(bytes32 requestId, uint256 payment, address callbackAddress, bytes4 callbackFunctionId, uint256 expiration, bytes calldata data)"
+data="{\"requestId\": $(decode_log.requestId), \"payment\": $(decode_log.payment), \"callbackAddress\": $(decode_log.callbackAddr), \"callbackFunctionId\": $(decode_log.callbackFunctionId), \"expiration\": $(decode_log.cancelExpiration), \"data\": $(encode_response)}"
+]
+
+submit_tx [
+type="ethtx"
+to="0xd006d393b49f89677722Ed04A26Ab83C74B1aC0e"
+data="$(encode_tx)"
+]
+
+// Dependency graph
+
+decode_log -> decode_cbor -> fetch
+
+fetch -> s_1 -> encode_response
+fetch -> s_2 -> encode_response
+fetch -> s_3 -> encode_response
+fetch -> s_4 -> encode_response
+fetch -> s_5 -> encode_response
+fetch -> s_6 -> encode_response
+
+encode_response -> encode_tx -> submit_tx
+
+} //digraph

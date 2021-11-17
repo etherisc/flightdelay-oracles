@@ -14,7 +14,7 @@ pragma solidity 0.6.11;
 
 import "openzeppelin-solidity/contracts/access/Ownable.sol";
 import "../Utilities/strings.sol";
-import "@etherisc/gif-interface/contracts/Oracle.sol";
+import "@etherisc/gif-interface/contracts/0.6/Oracle.sol";
 
 contract MockFlightRatingsOracle is Ownable, Oracle {
 

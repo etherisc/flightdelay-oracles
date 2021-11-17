@@ -1,0 +1,8 @@
+type                = "directrequest"
+schemaVersion       = 1
+name                = "Get FlightRatings"
+contractAddress     = "0xd006d393b49f89677722Ed04A26Ab83C74B1aC0e"
+# Optional externalJobID: Automatically generated if unspecified
+# externalJobID       = "0EEC7E1D-D0D2-476C-A1A8-72DFB6633F02"
+observationSource   = """
+"""

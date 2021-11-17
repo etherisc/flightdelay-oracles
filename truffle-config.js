@@ -1,22 +1,7 @@
 require('dotenv').config()
 const HDWalletProvider = require('@truffle/hdwallet-provider')
-const { settings } = require('./package')
-
-const hdWalletConfig = {
-  development: {
-    mnemonic: process.env.DEV_MNEMONIC,
-    providerOrUrl: process.env.DEV_HTTP_PROVIDER,
-  },
-  xdai: {
-    mnemonic: process.env.XDAI_MNEMONIC,
-    providerOrUrl: process.env.XDAI_HTTP_PROVIDER,
-  },
-  sokol: {
-    mnemonic: process.env.SOKOL_MNEMONIC,
-    providerOrUrl: process.env.SOKOL_HTTP_PROVIDER,
-    pollingInterval: 200000,
-  },
-}
+const { settings } = require('./package.json')
+const { hdWalletConfig } = require('./gif-config')
 
 module.exports = {
 
@@ -34,8 +19,6 @@ module.exports = {
       gasPrice: process.env.GASPRICE,
       websockets: process.env.WEBSOCKETS,
       skipDryRun: true,
-      gifRegistry: process.env.DEV_GIF_REGISTRY,
-      httpProvider: process.env.DEV_HTTP_PROVIDER,
     },
 
     xdai: {
@@ -47,8 +30,6 @@ module.exports = {
       gasPrice: process.env.GASPRICE,
       websockets: process.env.WEBSOCKETS,
       skipDryRun: true,
-      gifRegistry: process.env.XDAI_GIF_REGISTRY,
-      httpProvider: process.env.XDAI_HTTP_PROVIDER,
     },
 
     sokol: {
@@ -62,8 +43,6 @@ module.exports = {
       skipDryRun: true,
       deploymentPollingInterval: 200000,
       networkCheckTimeout: 999999,
-      gifRegistry: process.env.SOKOL_GIF_REGISTRY,
-      httpProvider: process.env.SOKOL_HTTP_PROVIDER,
     },
 
     coverage: {

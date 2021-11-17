@@ -8,16 +8,17 @@
  *
  */
 
-pragma solidity 0.6.11;
+pragma solidity 0.7.6;
 // SPDX-License-Identifier: Apache-2.0
 
 
-import "@chainlink/contracts/src/v0.6/ChainlinkClient.sol";
+import "@chainlink/contracts/src/v0.7/ChainlinkClient.sol";
 import "../Utilities/strings.sol";
 import "./ChainlinkOracle.sol";
 
 contract CLFlightRatingsOracle is ChainlinkOracle {
     using strings for *;
+    using Chainlink for Chainlink.Request;
 
     bytes32 public constant ORACLETYPE = "FlightRatings";
     bytes32 public constant NAME = "CL FlightRatings";

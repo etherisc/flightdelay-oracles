@@ -1,4 +1,4 @@
-pragma solidity 0.6.11;
+pragma solidity 0.7.6;
 // SPDX-License-Identifier: Apache-2.0
 
 contract Migrations {

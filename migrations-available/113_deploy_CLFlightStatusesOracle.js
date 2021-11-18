@@ -33,6 +33,6 @@ module.exports = async (deployer, network /* , accounts */) => {
       gas: 6000000,
     },
   )
-  const flightStatusesOracle = FlightStatusesOracle.deployed()
+  const flightStatusesOracle = await FlightStatusesOracle.deployed()
   info(`Deployed FlightStatusesOracle at ${flightStatusesOracle.address}`)
 }

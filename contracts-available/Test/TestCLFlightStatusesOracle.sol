@@ -1,10 +1,8 @@
 /**
- * @title FlightRatingsOracle is a contract which requests data from
+ * @title FlightStatusesOracle is a contract which requests data from
  * the Chainlink network
  * @dev This contract is designed to work on multiple networks, including
  * local test networks
- *
- * Deployed on rinkeby at 0xcd2cbac4f5e4d4f5d6d0f7b1fda0910b7f0c9c56
  *
  */
 
@@ -16,15 +14,15 @@ import "@chainlink/contracts/src/v0.7/ChainlinkClient.sol";
 import "../Utilities/strings.sol";
 import "./ChainlinkOracle.sol";
 
-contract TestCLFlightRatingsOracle is ChainlinkOracle {
+contract TestCLFlightStatusesOracle is ChainlinkOracle {
     using strings for *;
     using Chainlink for Chainlink.Request;
 
-    bytes32 public constant ORACLETYPE = "FlightRatings";
-    bytes32 public constant NAME = "CL FlightRatings";
+    bytes32 public constant ORACLETYPE = "FlightStatuses";
+    bytes32 public constant NAME = "CL FlightStatuses";
 
-    event Request(bytes32 chainlinkRequestId, uint256 gifRequestId, bytes32 carrierFlightNumber);
-    event Fulfill(uint256[6] statistics);
+    event Request(bytes32 chainlinkRequestId, uint256 gifRequestId, uint256 checkAtTime, bytes32 carrierFlightNumber, bytes32 departureYearMonthDay);
+    event Fulfill(bytes1 status, bool arrived, uint256 arrivalGateDelayMinutes);
 
     constructor(
         address _link,
@@ -51,17 +49,7 @@ contract TestCLFlightRatingsOracle is ChainlinkOracle {
     external
     override
     {
-        Chainlink.Request memory req = buildChainlinkRequest(
-            jobId,
-            address(this),
-            this.fulfill.selector
-        );
-        // (bytes32 carrierFlightNumber) = abi.decode(_input, (bytes32));
-        // req.add("cfn", carrierFlightNumber.toSliceB32().toString());
-        req.add("cfn", "/LH/117");
-        bytes32 chainlinkRequestId = sendChainlinkRequest(req, payment);
 
-        emit Request(chainlinkRequestId, 0 /* _gifRequestId */, "/LH/117");
     }
 
     function request2(bytes32 jobId)
@@ -72,17 +60,20 @@ contract TestCLFlightRatingsOracle is ChainlinkOracle {
             address(this),
             this.fulfill.selector
         );
-        req.add("carrier", "LH");
+        req.add("carrier", "LH/117");
         req.add("flightNumber", "117");
+        req.addUint("year", 2021);
+        req.addUint("month", 11);
+        req.addUint("day", 15);
         bytes32 chainlinkRequestId = sendChainlinkRequest(req, payment);
 
-        emit Request(chainlinkRequestId, 0 /* _gifRequestId */, "/LH/117");
+        emit Request(chainlinkRequestId, 0 /* _gifRequestId */, 0 /* checkAtTime */, "/LH/117", "2021/11/15");
     }
 
-    function fulfill(bytes32 _chainlinkRequestId, uint256 observations, uint256 late15, uint256 late30, uint256 late45, uint256 cancelled, uint256 diverted)
+    function fulfill(bytes32 _chainlinkRequestId, bytes1 status, bool arrived, uint256 delay)
     public
     recordChainlinkFulfillment(_chainlinkRequestId)
     {
-        emit Fulfill([observations, late15, late30, late45, cancelled, diverted]);
+        emit Fulfill(status, true, delay);
     }
 }

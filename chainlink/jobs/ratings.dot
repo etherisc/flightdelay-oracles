@@ -22,7 +22,7 @@ decode_cbor [
 fetch [
     type="http"
     method=GET
-    requestData="{\"carrier\": $(decode_cbor.carrier), \"flightNumber\": $(decode_cbor.flightNumber)}"
+    requestData="{\"carrierFlightNumber\": $(decode_cbor.carrierFlightNumber)}"
     url="https://fs-api.etherisc.com/api/v1/ratings-oracle"
     ]
 

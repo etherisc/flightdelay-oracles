@@ -18,10 +18,30 @@ contract CLFlightStatusesOracle is ChainlinkOracle {
     using strings for *;
     using Chainlink for Chainlink.Request;
 
+    struct QueuedRequest {
+        uint256 executionTime;
+        bytes32 carrierFlightNumber;
+        bytes32 yearMonthDay;
+    }
+
+    mapping(uint256 => QueuedRequest) queuedRequests;
+
     bytes32 public constant ORACLETYPE = "FlightStatuses";
     bytes32 public constant NAME = "CL FlightStatuses";
 
-    event Request(bytes32 chainlinkRequestId, uint256 gifRequestId, uint256 checkAtTime, bytes32 carrierFlightNumber, bytes32 departureYearMonthDay);
+    event RequestQueued(
+        uint256 gifRequestId,
+        uint256 checkAtTime,
+        bytes32 carrierFlightNumber,
+        bytes32 departureYearMonthDay
+    );
+    event Request(
+        bytes32 chainlinkRequestId,
+        uint256 gifRequestId,
+        uint256 checkAtTime,
+        bytes32 carrierFlightNumber,
+        bytes32 departureYearMonthDay
+    );
     event Fulfill(bytes1 status, bool arrived, uint256 arrivalGateDelayMinutes);
 
     constructor(
@@ -49,17 +69,40 @@ contract CLFlightStatusesOracle is ChainlinkOracle {
     external override
     onlyQuery
     {
+        (uint256 executionTime, bytes32 carrierFlightNumber, bytes32 yearMonthDay) = abi.decode(_input, (uint256, bytes32, bytes32));
+        require(executionTime > block.timestamp, 'ERROR:FSO-001:EXECUTION_TIME_IN_THE_PAST');
+        QueuedRequest memory queued = QueuedRequest(executionTime, carrierFlightNumber, yearMonthDay);
+        queuedRequests[_gifRequestId] = queued;
+        emit RequestQueued(
+            _gifRequestId,
+            executionTime,
+            carrierFlightNumber,
+            yearMonthDay
+        );
+    }
+
+    function executeQueuedRequest(uint256 _gifRequestId)
+    external // anybody can call this
+    {
+        // TODO: Add incentive system to ensure execution
+        QueuedRequest memory queued = queuedRequests[_gifRequestId];
+        require(queued.executionTime > 0 && queued.executionTime <= block.timestamp, 'ERROR:FSO-002:QUEUED_REQUEST_NOT_DUE');
+
         Chainlink.Request memory req = buildChainlinkRequest(jobId, address(this), this.fulfill.selector);
-        (uint256 checkAtTime, bytes32 carrierFlightNumber, bytes32 departureYearMonthDay) = abi.decode(_input, (uint256, bytes32, bytes32));
-        req.add("endpoint", "e-status");
-        req.add("carrierFlightNumber", carrierFlightNumber.toSliceB32().toString());
-        req.add("yearMonthDay", departureYearMonthDay.toSliceB32().toString());
-        req.add("checkAtTime", checkAtTime.toString());
+        req.add("carrierFlightNumber", queued.carrierFlightNumber.toSliceB32().toString());
+        req.add("yearMonthDay", queued.yearMonthDay.toSliceB32().toString());
         bytes32 chainlinkRequestId = sendChainlinkRequest(req, payment);
         requests[chainlinkRequestId] = _gifRequestId;
-
-        emit Request(chainlinkRequestId, _gifRequestId, checkAtTime, carrierFlightNumber, departureYearMonthDay);
+        delete queuedRequests[_gifRequestId];
+        emit Request(
+            chainlinkRequestId,
+            _gifRequestId,
+            queued.executionTime,
+            queued.carrierFlightNumber,
+            queued.yearMonthDay
+        );
     }
+
 
     function fulfill(bytes32 _chainlinkRequestId, bytes1 _status, bool _arrived, uint256 _delay)
     public

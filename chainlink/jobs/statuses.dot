@@ -22,7 +22,7 @@ data = "$(decode_log.data)"
 fetch [
 type = "http"
 method = GET
-requestData = "{\"carrier\": $(decode_cbor.carrier), \"flightNumber\": $(decode_cbor.flightNumber), \"year\": $(decode_cbor.year), \"month\": $(decode_cbor.month), \"day\": $(decode_cbor.day)}"
+requestData = "{\"carrierFlightNumber\": $(decode_cbor.carrierFlightNumber), \"yearMonthDay\": $(decode_cbor.yearMonthDay)}"
 url = "https://fs-api.etherisc.com/api/v1/status-oracle"
 ]
 

@@ -5,6 +5,7 @@ const gifConfig = require('../gif-config')
 const FlightStatusesOracle = artifacts.require('oracles/CLFlightStatusesOracle.sol')
 // eslint-disable-next-line no-console
 const info = console.log
+const uuid2hex = (uuid) => `0x${uuid.replaceAll('-', '')}`
 
 module.exports = async (deployer, network /* , accounts */) => {
   const {
@@ -12,7 +13,7 @@ module.exports = async (deployer, network /* , accounts */) => {
     httpProvider,
     chainLinkTokenAddress,
     chainLinkPaymentAmount,
-    chainLinkJobId,
+    chainLinkStatusesJobId,
     chainLinkOracleAddress,
   } = gifConfig.oracleConfig[network]
 
@@ -27,7 +28,7 @@ module.exports = async (deployer, network /* , accounts */) => {
     chainLinkOracleAddress,
     oracleServiceAddress,
     oracleOwnerServiceAddress,
-    chainLinkJobId,
+    uuid2hex(chainLinkStatusesJobId),
     chainLinkPaymentAmount,
     {
       gas: 6000000,

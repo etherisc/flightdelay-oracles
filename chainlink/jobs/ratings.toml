@@ -2,8 +2,6 @@ type                = "directrequest"
 schemaVersion       = 1
 name                = "Get FlightRatings"
 contractAddress     = "0xd006d393b49f89677722Ed04A26Ab83C74B1aC0e"
-# Optional externalJobID: Automatically generated if unspecified
-# externalJobID       = "0EEC7E1D-D0D2-476C-A1A8-72DFB6633F02"
 observationSource   = """
 //
 // Chainlink Job definition for the ratings oracle
@@ -28,7 +26,7 @@ decode_cbor [
 fetch [
     type="http"
     method=GET
-    requestData="{\\"carrier\\": $(decode_cbor.carrier), \\"flightNumber\\": $(decode_cbor.flightNumber)}"
+    requestData="{\\"carrierFlightNumber\\": $(decode_cbor.carrierFlightNumber)}"
     url="https://fs-api.etherisc.com/api/v1/ratings-oracle"
     ]
 

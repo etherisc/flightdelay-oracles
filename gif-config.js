@@ -22,7 +22,8 @@ const oracleConfig = {
     httpProvider: process.env.DEV_HTTP_PROVIDER,
     chainLinkTokenAddress: process.env.DEV_CHAINLINK_TOKEN,
     chainLinkPaymentAmount: process.env.DEV_CHAINLINK_PAYMENT,
-    chainLinkJobId: process.env.DEV_CHAINLINK_JOBID,
+    chainLinkRatingsJobId: process.env.DEV_CHAINLINK_RATINGS_JOBID,
+    chainLinkStatusesJobId: process.env.DEV_CHAINLINK_STATUSES_JOBID,
     chainLinkOracleAddress: process.env.DEV_CHAINLINK_ORACLE_ADDRESS,
   },
   xdai: {
@@ -30,7 +31,8 @@ const oracleConfig = {
     httpProvider: process.env.XDAI_HTTP_PROVIDER,
     chainLinkTokenAddress: process.env.XDAI_CHAINLINK_TOKEN,
     chainLinkPaymentAmount: process.env.XDAI_CHAINLINK_PAYMENT,
-    chainLinkJobId: process.env.XDAI_CHAINLINK_JOBID,
+    chainLinkRatingsJobId: process.env.XDAI_CHAINLINK_RATINGS_JOBID,
+    chainLinkStatusesJobId: process.env.XDAI_CHAINLINK_STATUSES_JOBID,
     chainLinkOracleAddress: process.env.XDAI_CHAINLINK_ORACLE_ADDRESS,
   },
   sokol: {
@@ -38,7 +40,8 @@ const oracleConfig = {
     httpProvider: process.env.SOKOL_HTTP_PROVIDER,
     chainLinkTokenAddress: process.env.SOKOL_CHAINLINK_TOKEN,
     chainLinkPaymentAmount: process.env.SOKOL_CHAINLINK_PAYMENT,
-    chainLinkJobId: process.env.SOKOL_CHAINLINK_JOBID,
+    chainLinkRatingsJobId: process.env.SOKOL_CHAINLINK_RATINGS_JOBID,
+    chainLinkStatusesJobId: process.env.SOKOL_CHAINLINK_STATUSES_JOBID,
     chainLinkOracleAddress: process.env.SOKOL_CHAINLINK_ORACLE_ADDRESS,
   },
 }

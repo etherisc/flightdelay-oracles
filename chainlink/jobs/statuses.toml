@@ -26,7 +26,7 @@ data = "$(decode_log.data)"
 fetch [
 type = "http"
 method = GET
-requestData = "{\\"carrier\\": $(decode_cbor.carrier), \\"flightNumber\\": $(decode_cbor.flightNumber), \\"year\\": $(decode_cbor.year), \\"month\\": $(decode_cbor.month), \\"day\\": $(decode_cbor.day)}"
+requestData = "{\\"carrierFlightNumber\\": $(decode_cbor.carrierFlightNumber), \\"yearMonthDay\\": $(decode_cbor.yearMonthDay)}"
 url = "https://fs-api.etherisc.com/api/v1/status-oracle"
 ]
 
@@ -41,7 +41,7 @@ delay [type = "jsonparse" data = "$(fetch)" path = "delay" ]
  // The abi is the abi of the fulfill function in the receiving contract.
 encode_response [
 type = "ethabiencode"
-abi = "(bytes32 requestId, bytes1 status, bool arrived, uint256 delay)"
+abi = "(bytes32 requestId, uint8 status, bool arrived, uint256 delay)"
 data= "{\\"requestId\\": $(decode_log.requestId), \\"status\\": $(status), \\"arrived\\": $(arrived), \\"delay\\": $(delay)}"
 ]
 

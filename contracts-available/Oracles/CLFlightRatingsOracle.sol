@@ -74,8 +74,8 @@ contract CLFlightRatingsOracle is ChainlinkOracle {
     recordChainlinkFulfillment(_chainlinkRequestId)
     {
         uint256[6] memory statistics = [_observations, _late15, _late30, _late45, _cancelled, _diverted];
-
-        _respond(requests[_chainlinkRequestId], abi.encode(statistics));
+        bytes memory data =  abi.encode(statistics);
+        _respond(requests[_chainlinkRequestId], data);
         delete requests[_chainlinkRequestId];
 
         updatedHeight = block.number;

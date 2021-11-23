@@ -19,8 +19,8 @@ module.exports = async (callback) => {
       chainLinkOracleAddress,
     } = gifConfig.oracleConfig[network]
 
-    const ratingsJobId = uuid2hex('810fb14d-3791-4826-8e7b-8d7861b48e15') // job #31
-    const statusesJobId = uuid2hex('243b6e69-a263-4736-a2fb-6185579fa515') // job #29
+    const ratingsJobId = uuid2hex('cbc36a88-6190-4488-a98c-a3ecaeb9d9a1') // job #31
+    const statusesJobId = uuid2hex('76210948-801e-49f9-b612-7d2843fab1c4') // job #29
     // eslint-disable-next-line no-undef
     const fro = await FlightRatingsOracle.deployed()
     const fso = await FlightStatusesOracle.deployed()
@@ -29,12 +29,15 @@ module.exports = async (callback) => {
     //         bytes32 _jobId,
     //         uint256 _payment
     //     ) external onlyOwner() {
+    info(`Sending Ratings update transaction, new jobId: ${ratingsJobId} ...`)
     let tx = await fro.updateRequestDetails(
       chainLinkOracleAddress,
       ratingsJobId,
       chainLinkPaymentAmount,
     )
     info('Ratings update, Transaction: ', tx)
+
+    info(`Sending status update transaction, new jobId: ${statusesJobId} ...`)
     tx = await fso.updateRequestDetails(
       chainLinkOracleAddress,
       statusesJobId,

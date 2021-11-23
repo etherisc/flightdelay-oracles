@@ -24,7 +24,7 @@ contract CLFlightStatusesOracle is ChainlinkOracle {
         bytes32 yearMonthDay;
     }
 
-    mapping(uint256 => QueuedRequest) queuedRequests;
+    mapping(uint256 => QueuedRequest) public queuedRequests;
 
     bytes32 public constant ORACLETYPE = "FlightStatuses";
     bytes32 public constant NAME = "CL FlightStatuses";
@@ -108,27 +108,36 @@ contract CLFlightStatusesOracle is ChainlinkOracle {
     public
     recordChainlinkFulfillment(_chainlinkRequestId)
     {
+        bytes memory data;
 
         if (_status == "C") {
             // Flight cancelled
-            _respond(requests[_chainlinkRequestId], abi.encode(_status, -1));
+            //_respond(requests[_chainlinkRequestId], abi.encode(_status, -1));
+            data = abi.encode(_status, -1);
         } else if (_status == "D") {
             // Flight diverted
-            _respond(requests[_chainlinkRequestId], abi.encode(_status, -1));
+            //_respond(requests[_chainlinkRequestId], abi.encode(_status, -1));
+            data = abi.encode(_status, -1);
         } else if (_status != "L" && _status != "A" && _status != "C" && _status != "D") {
             // Unprocessable _status
-            _respond(requests[_chainlinkRequestId], abi.encode(_status, -1));
+            //_respond(requests[_chainlinkRequestId], abi.encode(_status, -1));
+            data = abi.encode(_status, -1);
         } else {
             if (_status == "A" || (_status == "L" && !_arrived)) {
                 // Flight still active or not at gate
-                _respond(requests[_chainlinkRequestId], abi.encode(bytes1("A"), -1));
+                //_respond(requests[_chainlinkRequestId], abi.encode(bytes1("A"), -1));
+                data = abi.encode(bytes1("A"), -1);
             } else if (_status == "L" && _arrived) {
-                _respond(requests[_chainlinkRequestId], abi.encode(_status, _delay));
+                //_respond(requests[_chainlinkRequestId], abi.encode(_status, _delay));
+                data = abi.encode(_status, _delay);
             } else {
                 // No _delay info
-                _respond(requests[_chainlinkRequestId], abi.encode(_status, -1));
+                //_respond(requests[_chainlinkRequestId], abi.encode(_status, -1));
+                data = abi.encode(_status, -1);
             }
         }
+
+        _respond(requests[_chainlinkRequestId], data);
 
         delete requests[_chainlinkRequestId];
 

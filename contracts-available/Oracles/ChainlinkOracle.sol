@@ -73,7 +73,7 @@ abstract contract ChainlinkOracle is Ownable, Oracle, ChainlinkClient {
 
     function withdrawLink() public onlyOwner() {
         LinkTokenInterface link = LinkTokenInterface(chainlinkTokenAddress());
-        require(link.transfer(msg.sender, link.balanceOf(address(this))), "ERROR:CFR-003:UNABLE_TO_TRANSFER");
+        require(link.transfer(msg.sender, link.balanceOf(address(this))), "ERROR:CLO-003:UNABLE_TO_TRANSFER");
     }
 
     function cancelRequest(

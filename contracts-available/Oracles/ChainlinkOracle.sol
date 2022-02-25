@@ -20,8 +20,6 @@ abstract contract ChainlinkOracle is Ownable, Oracle, ChainlinkClient {
 
     bytes32 public jobId;
     uint256 public payment;
-    uint[6] public currentAnswer;
-    uint256 public updatedHeight;
 
     mapping(bytes32 /* CL request ID */ => uint256 /* Etherisc request ID */) public requests;
 

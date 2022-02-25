@@ -25,6 +25,8 @@ contract CLFlightStatusesOracle is ChainlinkOracle {
     }
 
     mapping(uint256 => QueuedRequest) public queuedRequests;
+    mapping(uint256 => bool) public isQueuedRequest;
+    uint256 public lastQueuedRequest;
 
     bytes32 public constant ORACLETYPE = "FlightStatuses";
     bytes32 public constant NAME = "CL FlightStatuses";
@@ -52,7 +54,6 @@ contract CLFlightStatusesOracle is ChainlinkOracle {
         bytes32 _jobId,
         uint256 _payment
     )
-    public
     ChainlinkOracle(
         _link,
         _chainLinkOracle,
@@ -73,6 +74,8 @@ contract CLFlightStatusesOracle is ChainlinkOracle {
         require(executionTime > block.timestamp, 'ERROR:FSO-001:EXECUTION_TIME_IN_THE_PAST');
         QueuedRequest memory queued = QueuedRequest(executionTime, carrierFlightNumber, yearMonthDay);
         queuedRequests[_gifRequestId] = queued;
+        isQueuedRequest[_gifRequestId] = true;
+        if (_gifRequestId > lastQueuedRequest) lastQueuedRequest = _gifRequestId;
         emit RequestQueued(
             _gifRequestId,
             executionTime,
@@ -85,6 +88,7 @@ contract CLFlightStatusesOracle is ChainlinkOracle {
     external // anybody can call this
     {
         // TODO: Add incentive system to ensure execution
+        require(isQueuedRequest[_gifRequestId], 'ERROR:FSO-002:NO_QUEUED_REQUEST');
         QueuedRequest memory queued = queuedRequests[_gifRequestId];
         require(queued.executionTime > 0 && queued.executionTime <= block.timestamp, 'ERROR:FSO-002:QUEUED_REQUEST_NOT_DUE');
 
@@ -94,6 +98,7 @@ contract CLFlightStatusesOracle is ChainlinkOracle {
         bytes32 chainlinkRequestId = sendChainlinkRequest(req, payment);
         requests[chainlinkRequestId] = _gifRequestId;
         delete queuedRequests[_gifRequestId];
+        delete isQueuedRequest[_gifRequestId];
         emit Request(
             chainlinkRequestId,
             _gifRequestId,
@@ -140,9 +145,6 @@ contract CLFlightStatusesOracle is ChainlinkOracle {
         _respond(requests[_chainlinkRequestId], data);
 
         delete requests[_chainlinkRequestId];
-
-        updatedHeight = block.number;
-
         emit Fulfill(_status, _arrived, _delay);
     }
 

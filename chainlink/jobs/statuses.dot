@@ -37,7 +37,7 @@ delay [type = "jsonparse" data = "$(fetch)" path = "delay" ]
  // The abi is the abi of the fulfill function in the receiving contract.
 encode_response [
 type = "ethabiencode"
-abi = "(bytes32 requestId, uint8 status, bool arrived, uint256 delay)"
+abi = "(bytes32 requestId, bytes1 status, bool arrived, uint256 delay)"
 data= "{\"requestId\": $(decode_log.requestId), \"status\": $(status), \"arrived\": $(arrived), \"delay\": $(delay)}"
 ]
 
